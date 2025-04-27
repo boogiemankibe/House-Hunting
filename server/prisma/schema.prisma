@@ -1,36 +1,46 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mongodb"
-    url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
-model User {
-    id               String      @id @default(auto()) @map("_id") @db.ObjectId
-    name             String?
-    email            String      @unique
-    image            String?
-    bookedVisits     Json[]
-    favResidenciesID String[]    @db.ObjectId
-    ownedResidencies Residency[] @relation("Owner")
+type ResidencyFacilities {
+  /// Multiple data types found: String: 78.9%, Int: 21.1% out of 19 sampled entries
+  bathrooms Json
+  /// Multiple data types found: String: 78.9%, Int: 21.1% out of 19 sampled entries
+  bedrooms  Json
+  parking   String?
+  parkings  Int?
+}
+
+type UserBookedVisits {
+  date String
+  id   String
 }
 
 model Residency {
-    id          String   @id @default(auto()) @map("_id") @db.ObjectId
-    title       String
-    description String
-    price       Int
-    address     String
-    city        String
-    country     String
-    image       String
-    facilities  Json
-    userEmail   String
-    owner       User     @relation("Owner", fields: [userEmail], references: [email])
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          String              @id @default(auto()) @map("_id") @db.ObjectId
+  address     String
+  city        String
+  country     String
+  createdAt   DateTime            @db.Date
+  description String
+  facilities  ResidencyFacilities
+  image       String
+  price       Int
+  title       String
+  updatedAt   DateTime            @db.Date
+  userEmail   String
 
-    @@unique(fields: [address, userEmail])
+  @@unique([address, userEmail])
+}
+
+model User {
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  bookedVisits     UserBookedVisits[]
+  email            String             @unique
+  favResidenciesiD String[]
 }

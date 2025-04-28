@@ -1,5 +1,4 @@
 import asyncHandler from "express-async-handler";
-
 import { prisma } from "../config/prismaConfig.js";
 
 export const createUser = asyncHandler(async (req, res) => {
@@ -45,7 +44,7 @@ export const bookVisit = asyncHandler(async (req, res) => {
   }
 });
 
-// funtion to get all bookings of a user
+// function to get all bookings of a user
 export const getAllBookings = asyncHandler(async (req, res) => {
   const { email } = req.body;
   try {
@@ -99,12 +98,12 @@ export const toFav = asyncHandler(async (req, res) => {
       where: { email },
     });
 
-    if (user.favResidenciesID.includes(rid)) {
+    if (user.favResidenciesiD.includes(rid)) {
       const updateUser = await prisma.user.update({
         where: { email },
         data: {
-          favResidenciesID: {
-            set: user.favResidenciesID.filter((id) => id !== rid),
+          favResidenciesiD: {
+            set: user.favResidenciesiD.filter((id) => id !== rid),
           },
         },
       });
@@ -114,7 +113,7 @@ export const toFav = asyncHandler(async (req, res) => {
       const updateUser = await prisma.user.update({
         where: { email },
         data: {
-          favResidenciesID: {
+          favResidenciesiD: {
             push: rid,
           },
         },
@@ -132,7 +131,7 @@ export const getAllFavorites = asyncHandler(async (req, res) => {
   try {
     const favResd = await prisma.user.findUnique({
       where: { email },
-      select: { favResidenciesID: true },
+      select: { favResidenciesiD: true },
     });
     res.status(200).send(favResd);
   } catch (err) {

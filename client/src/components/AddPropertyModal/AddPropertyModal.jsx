@@ -10,6 +10,10 @@ const AddPropertyModal = ({ opened, setOpened }) => {
   const [active, setActive] = useState(0);
   const { user } = useAuth0();
 
+  // Define the namespace for roles and check for the admin role
+  const rolesNamespace = "http://localhost/roles"; // Update this to match your Auth0 roles namespace
+  const isAdmin = user?.[rolesNamespace]?.includes("admin");
+
   const [propertyDetails, setPropertyDetails] = useState({
     title: "",
     description: "",
@@ -33,6 +37,23 @@ const AddPropertyModal = ({ opened, setOpened }) => {
   const prevStep = () => {
     setActive((current) => (current > 0 ? current - 1 : current));
   };
+
+  if (!isAdmin) {
+    return (
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        closeOnClickOutside
+        size={"90rem"}
+      >
+        <Container h={"40rem"} w={"100%"}>
+          <h3 style={{ textAlign: "center", marginTop: "20%" }}>
+            Unauthorized: Only admins can add properties.
+          </h3>
+        </Container>
+      </Modal>
+    );
+  }
 
   return (
     <Modal
